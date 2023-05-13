@@ -1,4 +1,3 @@
-
 /**
  * <code>SingletonList</code> 类用于实现单例队列。
  */
@@ -11,17 +10,14 @@ export class SingletonList<T> {
     /**
      * 创建一个新的 <code>SingletonList</code> 实例。
      */
-    constructor() {
-    }
+    constructor() {}
 
     /**
      * @internal
      */
     protected _add(element: T): void {
-        if (this.length === this.elements.length)
-            this.elements.push(element);
-        else
-            this.elements[this.length] = element;
+        if (this.length === this.elements.length) this.elements.push(element);
+        else this.elements[this.length] = element;
     }
 
     /**
@@ -29,25 +25,21 @@ export class SingletonList<T> {
      */
     add(element: T): void {
         let index = this.elements.indexOf(element);
-        if ((typeof (element) != "number") && index != -1 && index < this.length)
-            return;
-        if (this.length === this.elements.length)
-            this.elements.push(element);
-        else
-            this.elements[this.length] = element;
+        if (typeof element != "number" && index != -1 && index < this.length) return;
+        if (this.length === this.elements.length) this.elements.push(element);
+        else this.elements[this.length] = element;
         this.length++;
     }
 
-    indexof(element:T){
+    indexof(element: T) {
         let index = this.elements.indexOf(element);
-        if(index!=-1&&index<this.length)
-            return index;
+        if (index != -1 && index < this.length) return index;
         return -1;
     }
 
     /**
      * @internal
-     * @param element 
+     * @param element
      */
     remove(element: T): void {
         let index = this.elements.indexOf(element);
@@ -55,13 +47,12 @@ export class SingletonList<T> {
             this.elements[index] = this.elements[this.length - 1];
             this.length--;
         }
-
     }
 
     /**
      * @internal
      */
-    clear(){
+    clear() {
         this.elements = [];
         this.length = 0;
     }
@@ -69,7 +60,7 @@ export class SingletonList<T> {
     /**
      * @internal
      */
-    clean(){
+    clean() {
         this.elements.length = this.length;
     }
 
@@ -77,5 +68,3 @@ export class SingletonList<T> {
         this.elements = null;
     }
 }
-
-

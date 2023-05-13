@@ -1,11 +1,10 @@
-import { Matrix } from "../maths/Matrix"
+import { Matrix } from "../maths/Matrix";
 
 /**
  * <p> <code>Byte</code> 类提供用于优化读取、写入以及处理二进制数据的方法和属性。</p>
  * <p> <code>Byte</code> 类适用于需要在字节层访问数据的高级开发人员。</p>
  */
 export class Byte {
-
     /**
      * <p>主机字节序，是 CPU 存放数据的两种不同顺序，包括小端字节序和大端字节序。通过 <code>getSystemEndian</code> 可以获取当前系统的字节序。</p>
      * <p> <code>BIG_ENDIAN</code> ：大端字节序，地址低位存储值的高位，地址高位存储值的低位。有时也称之为网络字节序。<br/>
@@ -19,13 +18,13 @@ export class Byte {
      */
     static LITTLE_ENDIAN: string = "littleEndian";
     /**@private */
-    private static _sysEndian: string = null;
+    private static _sysEndian: string | null = null;
     /**@private 是否为小端数据。*/
     protected _xd_: boolean = true;
     /**@private */
     private _allocated_: number = 8;
     /**@private 原始数据。*/
-    protected _d_: any
+    protected _d_: any;
     /**@private DataView*/
     protected _u8d_: any;
     /**@private */
@@ -44,7 +43,8 @@ export class Byte {
         if (!Byte._sysEndian) {
             var buffer: any = new ArrayBuffer(2);
             new DataView(buffer).setInt16(0, 256, true);
-            Byte._sysEndian = (new Int16Array(buffer))[0] === 256 ? Byte.LITTLE_ENDIAN : Byte.BIG_ENDIAN;
+            Byte._sysEndian =
+                new Int16Array(buffer)[0] === 256 ? Byte.LITTLE_ENDIAN : Byte.BIG_ENDIAN;
         }
         return Byte._sysEndian;
     }
@@ -83,7 +83,7 @@ export class Byte {
     }
 
     set endian(value: string) {
-        this._xd_ = (value === Byte.LITTLE_ENDIAN);
+        this._xd_ = value === Byte.LITTLE_ENDIAN;
     }
 
     /**
@@ -92,8 +92,11 @@ export class Byte {
      * <p>如果要设置的长度大于当前已分配的内存空间的字节长度，则重新分配内存空间，大小为以下两者较大者：要设置的长度、当前已分配的长度的2倍，并将原有数据拷贝到新的内存空间中；如果要设置的长度小于当前已分配的内存空间的字节长度，也会重新分配内存空间，大小为要设置的长度，并将原有数据从头截断为要设置的长度存入新的内存空间中。</p>
      */
     set length(value: number) {
-        if (this._allocated_ < value) this._resizeBuffer(this._allocated_ = Math.floor(Math.max(value, this._allocated_ * 2)));
-        else if (this._allocated_ > value) this._resizeBuffer(this._allocated_ = value);
+        if (this._allocated_ < value)
+            this._resizeBuffer(
+                (this._allocated_ = Math.floor(Math.max(value, this._allocated_ * 2)))
+            );
+        else if (this._allocated_ > value) this._resizeBuffer((this._allocated_ = value));
         this._length = value;
     }
 
@@ -155,7 +158,7 @@ export class Byte {
      */
     readFloat32Array(start: number, len: number): any {
         var end: number = start + len;
-        end = (end > this._length) ? this._length : end;
+        end = end > this._length ? this._length : end;
         var v: any = new Float32Array(this._d_.buffer.slice(start, end));
         this._pos_ = end;
         return v;
@@ -180,7 +183,7 @@ export class Byte {
      */
     readUint8Array(start: number, len: number): Uint8Array {
         var end: number = start + len;
-        end = (end > this._length) ? this._length : end;
+        end = end > this._length ? this._length : end;
         var v: any = new Uint8Array(this._d_.buffer.slice(start, end));
         this._pos_ = end;
         return v;
@@ -206,7 +209,7 @@ export class Byte {
      */
     readInt16Array(start: number, len: number): any {
         var end: number = start + len;
-        end = (end > this._length) ? this._length : end;
+        end = end > this._length ? this._length : end;
         var v: any = new Int16Array(this._d_.buffer.slice(start, end));
         this._pos_ = end;
         return v;
@@ -481,7 +484,14 @@ export class Byte {
      */
     //TODO:coverage
     _readMatrix(): Matrix {
-        var rst: Matrix = new Matrix(this.getFloat32(), this.getFloat32(), this.getFloat32(), this.getFloat32(), this.getFloat32(), this.getFloat32());
+        var rst: Matrix = new Matrix(
+            this.getFloat32(),
+            this.getFloat32(),
+            this.getFloat32(),
+            this.getFloat32(),
+            this.getFloat32(),
+            this.getFloat32()
+        );
         return rst;
     }
 
@@ -492,8 +502,14 @@ export class Byte {
      * @return 读取的字符串。
      */
     private _rUTF(len: number): string {
-        var v: string = "", max: number = this._pos_ + len, c: number, c2: number, c3: number, f: Function = String.fromCharCode;
-        var u: any = this._u8d_, i: number = 0;
+        var v: string = "",
+            max: number = this._pos_ + len,
+            c: number,
+            c2: number,
+            c3: number,
+            f: Function = String.fromCharCode;
+        var u: any = this._u8d_,
+            i: number = 0;
         var strs: any[] = [];
         var n: number = 0;
         strs.length = 1000;
@@ -503,33 +519,36 @@ export class Byte {
                 if (c != 0)
                     //v += f(c);\
                     strs[n++] = f(c);
-            } else if (c < 0xE0) {
+            } else if (c < 0xe0) {
                 //v += f(((c & 0x3F) << 6) | (u[_pos_++] & 0x7F));
-                strs[n++] = f(((c & 0x3F) << 6) | (u[this._pos_++] & 0x7F));
-            } else if (c < 0xF0) {
+                strs[n++] = f(((c & 0x3f) << 6) | (u[this._pos_++] & 0x7f));
+            } else if (c < 0xf0) {
                 c2 = u[this._pos_++];
                 //v += f(((c & 0x1F) << 12) | ((c2 & 0x7F) << 6) | (u[_pos_++] & 0x7F));
-                strs[n++] = f(((c & 0x1F) << 12) | ((c2 & 0x7F) << 6) | (u[this._pos_++] & 0x7F));
+                strs[n++] = f(((c & 0x1f) << 12) | ((c2 & 0x7f) << 6) | (u[this._pos_++] & 0x7f));
             } else {
                 c2 = u[this._pos_++];
                 c3 = u[this._pos_++];
                 //v += f(((c & 0x0F) << 18) | ((c2 & 0x7F) << 12) | ((c3 << 6) & 0x7F) | (u[_pos_++] & 0x7F));
-                const _code = ((c & 0x0F) << 18) | ((c2 & 0x7F) << 12) | ((c3 & 0x7F) << 6) | (u[this._pos_++] & 0x7F);
+                const _code =
+                    ((c & 0x0f) << 18) |
+                    ((c2 & 0x7f) << 12) |
+                    ((c3 & 0x7f) << 6) |
+                    (u[this._pos_++] & 0x7f);
                 if (_code >= 0x10000) {
                     const _offset = _code - 0x10000;
                     const _lead = 0xd800 | (_offset >> 10);
                     const _trail = 0xdc00 | (_offset & 0x3ff);
                     strs[n++] = f(_lead);
                     strs[n++] = f(_trail);
-                }
-                else {
+                } else {
                     strs[n++] = f(_code);
                 }
             }
             i++;
         }
         strs.length = n;
-        return strs.join('');
+        return strs.join("");
         //return v;
     }
 
@@ -552,8 +571,13 @@ export class Byte {
      */
     //TODO:coverage
     readCustomString(len: number): string {
-        var v: string = "", ulen: number = 0, c: number, c2: number, f: Function = String.fromCharCode;
-        var u: any = this._u8d_, i: number = 0;
+        var v: string = "",
+            ulen: number = 0,
+            c: number,
+            c2: number,
+            f: Function = String.fromCharCode;
+        var u: any = this._u8d_,
+            i: number = 0;
         while (len > 0) {
             c = u[this._pos_];
             if (c < 0x80) {
@@ -625,36 +649,47 @@ export class Byte {
         for (var i: number = 0, sz: number = value.length; i < sz; i++) {
             var c: number = value.charCodeAt(i);
 
-            if (c <= 0x7F) {
+            if (c <= 0x7f) {
                 this.writeByte(c);
-            } else if (c <= 0x7FF) {
+            } else if (c <= 0x7ff) {
                 //优化为直接写入多个字节，而不必重复调用writeByte，免去额外的调用和逻辑开销。
                 this._ensureWrite(this._pos_ + 2);
-                this._u8d_.set([0xC0 | (c >> 6), 0x80 | (c & 0x3F)], this._pos_);
+                this._u8d_.set([0xc0 | (c >> 6), 0x80 | (c & 0x3f)], this._pos_);
                 this._pos_ += 2;
-            } else if (c >= 0xD800 && c <= 0xDBFF) {
+            } else if (c >= 0xd800 && c <= 0xdbff) {
                 i++;
                 const c2 = value.charCodeAt(i);
-                if (!Number.isNaN(c2) && c2 >= 0xDC00 && c2 <= 0xDFFF) {
-                    const _p1 = (c & 0x3FF) + 0x40;
-                    const _p2 = c2 & 0x3FF;
+                if (!Number.isNaN(c2) && c2 >= 0xdc00 && c2 <= 0xdfff) {
+                    const _p1 = (c & 0x3ff) + 0x40;
+                    const _p2 = c2 & 0x3ff;
 
-                    const _b1 = 0xF0 | ((_p1 >> 8) & 0x3F);
-                    const _b2 = 0x80 | ((_p1 >> 2) & 0x3F);
-                    const _b3 = 0x80 | ((_p1 & 0x3) << 4) | ((_p2 >> 6) & 0xF);
-                    const _b4 = 0x80 | (_p2 & 0x3F);
+                    const _b1 = 0xf0 | ((_p1 >> 8) & 0x3f);
+                    const _b2 = 0x80 | ((_p1 >> 2) & 0x3f);
+                    const _b3 = 0x80 | ((_p1 & 0x3) << 4) | ((_p2 >> 6) & 0xf);
+                    const _b4 = 0x80 | (_p2 & 0x3f);
 
                     this._ensureWrite(this._pos_ + 4);
                     this._u8d_.set([_b1, _b2, _b3, _b4], this._pos_);
                     this._pos_ += 4;
                 }
-            } else if (c <= 0xFFFF) {
+            } else if (c <= 0xffff) {
                 this._ensureWrite(this._pos_ + 3);
-                this._u8d_.set([0xE0 | (c >> 12), 0x80 | ((c >> 6) & 0x3F), 0x80 | (c & 0x3F)], this._pos_);
+                this._u8d_.set(
+                    [0xe0 | (c >> 12), 0x80 | ((c >> 6) & 0x3f), 0x80 | (c & 0x3f)],
+                    this._pos_
+                );
                 this._pos_ += 3;
             } else {
                 this._ensureWrite(this._pos_ + 4);
-                this._u8d_.set([0xF0 | (c >> 18), 0x80 | ((c >> 12) & 0x3F), 0x80 | ((c >> 6) & 0x3F), 0x80 | (c & 0x3F)], this._pos_);
+                this._u8d_.set(
+                    [
+                        0xf0 | (c >> 18),
+                        0x80 | ((c >> 12) & 0x3f),
+                        0x80 | ((c >> 6) & 0x3f),
+                        0x80 | (c & 0x3f),
+                    ],
+                    this._pos_
+                );
                 this._pos_ += 4;
             }
         }
@@ -686,7 +721,6 @@ export class Byte {
         //trace("writeLen:",dPos,"pos:",tPos);
         this._d_.setUint32(tPos, dPos, this._xd_);
     }
-
 
     /**
      * @private
@@ -804,8 +838,7 @@ export class Byte {
     readArrayBuffer(length: number): ArrayBuffer {
         var rst: ArrayBuffer;
         rst = this._u8d_.buffer.slice(this._pos_, this._pos_ + length);
-        this._pos_ = this._pos_ + length
+        this._pos_ = this._pos_ + length;
         return rst;
     }
 }
-
