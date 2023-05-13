@@ -1,16 +1,15 @@
 export class Base64Tool {
-
     static chars: string = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-    static reg = /^\s*data:([a-z]+\/[a-z0-9-+.]+(;[a-z-]+=[a-z0-9-]+)?)?(;base64)?,([a-z0-9!$&',()*+;=\-._~:@\/?%\s]*?)\s*$/i;
+    static reg =
+        /^\s*data:([a-z]+\/[a-z0-9-+.]+(;[a-z-]+=[a-z0-9-]+)?)?(;base64)?,([a-z0-9!$&',()*+;=\-._~:@\/?%\s]*?)\s*$/i;
     static reghead = /^\s*data:([a-z]+\/[a-z0-9-+.]+(;[a-z-]+=[a-z0-9-]+)?)?(;base64)?,/i;
 
     // Use a lookup table to find the index.
     static lookup: Uint8Array = null;
 
     static init(): void {
-        if (Base64Tool.lookup)
-            return;
-        Base64Tool.lookup = new Uint8Array(256)
+        if (Base64Tool.lookup) return;
+        Base64Tool.lookup = new Uint8Array(256);
         for (var i: number = 0; i < Base64Tool.chars.length; i++) {
             Base64Tool.lookup[Base64Tool.chars.charCodeAt(i)] = i;
         }
@@ -18,20 +17,23 @@ export class Base64Tool {
 
     /**
      * 判断字符串是否是 base64
-     * @param str 
+     * @param str
      */
     static isBase64String(str: string): boolean {
         return Base64Tool.reg.test(str);
     }
 
     /**
-     * 编码ArrayBuffer 
+     * 编码ArrayBuffer
      * @param arraybuffer
-     * @return 
-     * 
+     * @return
+     *
      */
     static encode(arraybuffer: ArrayBuffer): string {
-        var bytes: Uint8Array = new Uint8Array(arraybuffer), i: number, len: number = bytes["length"], base64: string = "";
+        var bytes: Uint8Array = new Uint8Array(arraybuffer),
+            i: number,
+            len: number = bytes["length"],
+            base64: string = "";
 
         for (i = 0; i < len; i += 3) {
             base64 += Base64Tool.chars[bytes[i] >> 2];
@@ -40,10 +42,9 @@ export class Base64Tool {
             base64 += Base64Tool.chars[bytes[i + 2] & 63];
         }
 
-        if ((len % 3) === 2) {
+        if (len % 3 === 2) {
             base64 = base64.substring(0, base64.length - 1) + "=";
-        }
-        else if (len % 3 === 1) {
+        } else if (len % 3 === 1) {
             base64 = base64.substring(0, base64.length - 2) + "==";
         }
 
@@ -51,14 +52,21 @@ export class Base64Tool {
     }
 
     /**
-     * 解码成ArrayBuffer 
+     * 解码成ArrayBuffer
      * @param base64
-     * @return 
-     * 
+     * @return
+     *
      */
     static decode(base64: string): ArrayBuffer {
         Base64Tool.init();
-        var bufferLength: number = base64.length * 0.75, len: number = base64.length, i: number, p: number = 0, encoded1: number, encoded2: number, encoded3: number, encoded4: number;
+        var bufferLength: number = base64.length * 0.75,
+            len: number = base64.length,
+            i: number,
+            p: number = 0,
+            encoded1: number,
+            encoded2: number,
+            encoded3: number,
+            encoded4: number;
 
         if (base64[base64.length - 1] === "=") {
             bufferLength--;
@@ -67,7 +75,8 @@ export class Base64Tool {
             }
         }
 
-        var arraybuffer: ArrayBuffer = new ArrayBuffer(bufferLength), bytes: Uint8Array = new Uint8Array(arraybuffer);
+        var arraybuffer: ArrayBuffer = new ArrayBuffer(bufferLength),
+            bytes: Uint8Array = new Uint8Array(arraybuffer);
 
         for (i = 0; i < len; i += 4) {
             encoded1 = Base64Tool.lookup[base64.charCodeAt(i)];
@@ -82,5 +91,4 @@ export class Base64Tool {
 
         return arraybuffer;
     }
-
 }
