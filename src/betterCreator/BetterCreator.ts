@@ -5,12 +5,14 @@ export class BetterCreator {
     /**
      * 初始化引擎。使用引擎需要先初始化引擎，否则可能会报错。
      */
-    static init(stageConfig?: IStageConfig): Promise<void> {}
+    static init(stageConfig?: IStageConfig): Promise<void>;
     /**
      * @param width
      * @param height
      */
-    static init(width: number, height: number) {}
+    static init(width?: any, height?: any): Promise<void> {
+        return new Promise(() => {});
+    }
     /**@private Render 类的引用。*/
     static render: any;
 }
