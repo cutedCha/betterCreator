@@ -1,11 +1,21 @@
 {
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "noImplicitAny": true,
+
     "module": "es6",
     "target": "es5",
-    "allowJs": true,
-    "strictNullChecks": false
+    "composite": true,
+    "stripInternal": true,
+    "removeComments": false,
+    "preserveConstEnums": false,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "strictFunctionTypes": true,
+    "noImplicitReturns": true /* Report error when not all code paths in function return a value. */,
+    "noFallthroughCasesInSwitch": true /* Report errors for fallthrough cases in switch statement. */,
+    "strictPropertyInitialization": false,
+    "skipLibCheck": true,
+    "strict": true,
+    "strictNullChecks": false,
   },
   "files": ["src/index.ts"]
 }
