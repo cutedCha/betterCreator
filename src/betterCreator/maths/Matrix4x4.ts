@@ -21,7 +21,24 @@ export class Matrix4x4 implements IClone {
     /**默认矩阵,禁止修改*/
     static readonly DEFAULT: Readonly<Matrix4x4> = new Matrix4x4();
     /**默认矩阵,禁止修改*/
-    static readonly ZERO: Readonly<Matrix4x4> = new Matrix4x4(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    static readonly ZERO: Readonly<Matrix4x4> = new Matrix4x4(
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+    );
 
     /**
      * 绕X轴旋转
@@ -30,7 +47,8 @@ export class Matrix4x4 implements IClone {
      */
     static createRotationX(rad: number, out: Matrix4x4): void {
         var oe: Float32Array = out.elements;
-        var s: number = Math.sin(rad), c: number = Math.cos(rad);
+        var s: number = Math.sin(rad),
+            c: number = Math.cos(rad);
 
         oe[1] = oe[2] = oe[3] = oe[4] = oe[7] = oe[8] = oe[11] = oe[12] = oe[13] = oe[14] = 0;
         oe[0] = oe[15] = 1;
@@ -46,9 +64,9 @@ export class Matrix4x4 implements IClone {
      * @param	out 输出矩阵
      */
     static createRotationY(rad: number, out: Matrix4x4): void {
-
         var oe: Float32Array = out.elements;
-        var s: number = Math.sin(rad), c: number = Math.cos(rad);
+        var s: number = Math.sin(rad),
+            c: number = Math.cos(rad);
 
         oe[1] = oe[3] = oe[4] = oe[6] = oe[7] = oe[9] = oe[11] = oe[12] = oe[13] = oe[14] = 0;
         oe[5] = oe[15] = 1;
@@ -63,9 +81,9 @@ export class Matrix4x4 implements IClone {
      * @param	out 输出矩阵
      */
     static createRotationZ(rad: number, out: Matrix4x4): void {
-
         var oe: Float32Array = out.elements;
-        var s: number = Math.sin(rad), c: number = Math.cos(rad);
+        var s: number = Math.sin(rad),
+            c: number = Math.cos(rad);
 
         oe[2] = oe[3] = oe[6] = oe[7] = oe[8] = oe[9] = oe[11] = oe[12] = oe[13] = oe[14] = 0;
         oe[10] = oe[15] = 1;
@@ -81,7 +99,12 @@ export class Matrix4x4 implements IClone {
      * @param	roll
      * @param	result
      */
-    static createRotationYawPitchRoll(yaw: number, pitch: number, roll: number, result: Matrix4x4): void {
+    static createRotationYawPitchRoll(
+        yaw: number,
+        pitch: number,
+        roll: number,
+        result: Matrix4x4
+    ): void {
         Quaternion.createFromYawPitchRoll(yaw, pitch, roll, Quaternion.TEMP);
         Matrix4x4.createRotationQuaternion(Quaternion.TEMP, result);
     }
@@ -108,15 +131,15 @@ export class Matrix4x4 implements IClone {
         var resultE: Float32Array = result.elements;
         resultE[3] = resultE[7] = resultE[11] = resultE[12] = resultE[13] = resultE[14] = 0;
         resultE[15] = 1.0;
-        resultE[0] = xx + (cos * (1.0 - xx));
-        resultE[1] = (xy - (cos * xy)) + (sin * z);
-        resultE[2] = (xz - (cos * xz)) - (sin * y);
-        resultE[4] = (xy - (cos * xy)) - (sin * z);
-        resultE[5] = yy + (cos * (1.0 - yy));
-        resultE[6] = (yz - (cos * yz)) + (sin * x);
-        resultE[8] = (xz - (cos * xz)) + (sin * y);
-        resultE[9] = (yz - (cos * yz)) - (sin * x);
-        resultE[10] = zz + (cos * (1.0 - zz));
+        resultE[0] = xx + cos * (1.0 - xx);
+        resultE[1] = xy - cos * xy + sin * z;
+        resultE[2] = xz - cos * xz - sin * y;
+        resultE[4] = xy - cos * xy - sin * z;
+        resultE[5] = yy + cos * (1.0 - yy);
+        resultE[6] = yz - cos * yz + sin * x;
+        resultE[8] = xz - cos * xz + sin * y;
+        resultE[9] = yz - cos * yz - sin * x;
+        resultE[10] = zz + cos * (1.0 - zz);
     }
 
     /**
@@ -143,15 +166,15 @@ export class Matrix4x4 implements IClone {
 
         resultE[3] = resultE[7] = resultE[11] = resultE[12] = resultE[13] = resultE[14] = 0;
         resultE[15] = 1.0;
-        resultE[0] = 1.0 - (2.0 * (yy + zz));
+        resultE[0] = 1.0 - 2.0 * (yy + zz);
         resultE[1] = 2.0 * (xy + zw);
         resultE[2] = 2.0 * (zx - yw);
         resultE[4] = 2.0 * (xy - zw);
-        resultE[5] = 1.0 - (2.0 * (zz + xx));
+        resultE[5] = 1.0 - 2.0 * (zz + xx);
         resultE[6] = 2.0 * (yz + xw);
         resultE[8] = 2.0 * (zx + yw);
         resultE[9] = 2.0 * (yz - xw);
-        resultE[10] = 1.0 - (2.0 * (yy + xx));
+        resultE[10] = 1.0 - 2.0 * (yy + xx);
     }
 
     /**
@@ -160,7 +183,6 @@ export class Matrix4x4 implements IClone {
      * @param	out 输出矩阵
      */
     static createTranslate(trans: Vector3, out: Matrix4x4): void {
-
         var oe: Float32Array = out.elements;
         oe[4] = oe[8] = oe[1] = oe[9] = oe[2] = oe[6] = oe[3] = oe[7] = oe[11] = 0;
         oe[0] = oe[5] = oe[10] = oe[15] = 1;
@@ -175,12 +197,23 @@ export class Matrix4x4 implements IClone {
      * @param	out 输出矩阵
      */
     static createScaling(scale: Vector3, out: Matrix4x4): void {
-
         var oe: Float32Array = out.elements;
         oe[0] = scale.x;
         oe[5] = scale.y;
         oe[10] = scale.z;
-        oe[1] = oe[4] = oe[8] = oe[12] = oe[9] = oe[13] = oe[2] = oe[6] = oe[14] = oe[3] = oe[7] = oe[11] = 0;
+        oe[1] =
+            oe[4] =
+            oe[8] =
+            oe[12] =
+            oe[9] =
+            oe[13] =
+            oe[2] =
+            oe[6] =
+            oe[14] =
+            oe[3] =
+            oe[7] =
+            oe[11] =
+                0;
         oe[15] = 1;
     }
 
@@ -195,32 +228,56 @@ export class Matrix4x4 implements IClone {
         var r: Float32Array = left.elements;
         var e: Float32Array = out.elements;
 
-        var l11: number = l[0], l12: number = l[1], l13: number = l[2], l14: number = l[3];
-        var l21: number = l[4], l22: number = l[5], l23: number = l[6], l24: number = l[7];
-        var l31: number = l[8], l32: number = l[9], l33: number = l[10], l34: number = l[11];
-        var l41: number = l[12], l42: number = l[13], l43: number = l[14], l44: number = l[15];
+        var l11: number = l[0],
+            l12: number = l[1],
+            l13: number = l[2],
+            l14: number = l[3];
+        var l21: number = l[4],
+            l22: number = l[5],
+            l23: number = l[6],
+            l24: number = l[7];
+        var l31: number = l[8],
+            l32: number = l[9],
+            l33: number = l[10],
+            l34: number = l[11];
+        var l41: number = l[12],
+            l42: number = l[13],
+            l43: number = l[14],
+            l44: number = l[15];
 
-        var r11: number = r[0], r12: number = r[1], r13: number = r[2], r14: number = r[3];
-        var r21: number = r[4], r22: number = r[5], r23: number = r[6], r24: number = r[7];
-        var r31: number = r[8], r32: number = r[9], r33: number = r[10], r34: number = r[11];
-        var r41: number = r[12], r42: number = r[13], r43: number = r[14], r44: number = r[15];
+        var r11: number = r[0],
+            r12: number = r[1],
+            r13: number = r[2],
+            r14: number = r[3];
+        var r21: number = r[4],
+            r22: number = r[5],
+            r23: number = r[6],
+            r24: number = r[7];
+        var r31: number = r[8],
+            r32: number = r[9],
+            r33: number = r[10],
+            r34: number = r[11];
+        var r41: number = r[12],
+            r42: number = r[13],
+            r43: number = r[14],
+            r44: number = r[15];
 
-        e[0] = (l11 * r11) + (l12 * r21) + (l13 * r31) + (l14 * r41);
-        e[1] = (l11 * r12) + (l12 * r22) + (l13 * r32) + (l14 * r42);
-        e[2] = (l11 * r13) + (l12 * r23) + (l13 * r33) + (l14 * r43);
-        e[3] = (l11 * r14) + (l12 * r24) + (l13 * r34) + (l14 * r44);
-        e[4] = (l21 * r11) + (l22 * r21) + (l23 * r31) + (l24 * r41);
-        e[5] = (l21 * r12) + (l22 * r22) + (l23 * r32) + (l24 * r42);
-        e[6] = (l21 * r13) + (l22 * r23) + (l23 * r33) + (l24 * r43);
-        e[7] = (l21 * r14) + (l22 * r24) + (l23 * r34) + (l24 * r44);
-        e[8] = (l31 * r11) + (l32 * r21) + (l33 * r31) + (l34 * r41);
-        e[9] = (l31 * r12) + (l32 * r22) + (l33 * r32) + (l34 * r42);
-        e[10] = (l31 * r13) + (l32 * r23) + (l33 * r33) + (l34 * r43);
-        e[11] = (l31 * r14) + (l32 * r24) + (l33 * r34) + (l34 * r44);
-        e[12] = (l41 * r11) + (l42 * r21) + (l43 * r31) + (l44 * r41);
-        e[13] = (l41 * r12) + (l42 * r22) + (l43 * r32) + (l44 * r42);
-        e[14] = (l41 * r13) + (l42 * r23) + (l43 * r33) + (l44 * r43);
-        e[15] = (l41 * r14) + (l42 * r24) + (l43 * r34) + (l44 * r44);
+        e[0] = l11 * r11 + l12 * r21 + l13 * r31 + l14 * r41;
+        e[1] = l11 * r12 + l12 * r22 + l13 * r32 + l14 * r42;
+        e[2] = l11 * r13 + l12 * r23 + l13 * r33 + l14 * r43;
+        e[3] = l11 * r14 + l12 * r24 + l13 * r34 + l14 * r44;
+        e[4] = l21 * r11 + l22 * r21 + l23 * r31 + l24 * r41;
+        e[5] = l21 * r12 + l22 * r22 + l23 * r32 + l24 * r42;
+        e[6] = l21 * r13 + l22 * r23 + l23 * r33 + l24 * r43;
+        e[7] = l21 * r14 + l22 * r24 + l23 * r34 + l24 * r44;
+        e[8] = l31 * r11 + l32 * r21 + l33 * r31 + l34 * r41;
+        e[9] = l31 * r12 + l32 * r22 + l33 * r32 + l34 * r42;
+        e[10] = l31 * r13 + l32 * r23 + l33 * r33 + l34 * r43;
+        e[11] = l31 * r14 + l32 * r24 + l33 * r34 + l34 * r44;
+        e[12] = l41 * r11 + l42 * r21 + l43 * r31 + l44 * r41;
+        e[13] = l41 * r12 + l42 * r22 + l43 * r32 + l44 * r42;
+        e[14] = l41 * r13 + l42 * r23 + l43 * r33 + l44 * r43;
+        e[15] = l41 * r14 + l42 * r24 + l43 * r34 + l44 * r44;
     }
 
     /**
@@ -230,7 +287,10 @@ export class Matrix4x4 implements IClone {
      */
     static createFromQuaternion(rotation: Quaternion, out: Matrix4x4): void {
         var e: Float32Array = out.elements;
-        var x: number = rotation.x, y: number = rotation.y, z: number = rotation.z, w: number = rotation.w;
+        var x: number = rotation.x,
+            y: number = rotation.y,
+            z: number = rotation.z,
+            w: number = rotation.w;
         var x2: number = x + x;
         var y2: number = y + y;
         var z2: number = z + z;
@@ -273,12 +333,33 @@ export class Matrix4x4 implements IClone {
      * @param	scale 缩放
      * @param	out 输出矩阵
      */
-    static createAffineTransformation(trans: Vector3, rot: Quaternion, scale: Vector3, out: Matrix4x4): void {
+    static createAffineTransformation(
+        trans: Vector3,
+        rot: Quaternion,
+        scale: Vector3,
+        out: Matrix4x4
+    ): void {
         var oe: Float32Array = out.elements;
 
-        var x: number = rot.x, y: number = rot.y, z: number = rot.z, w: number = rot.w, x2: number = x + x, y2: number = y + y, z2: number = z + z;
-        var xx: number = x * x2, xy: number = x * y2, xz: number = x * z2, yy: number = y * y2, yz: number = y * z2, zz: number = z * z2;
-        var wx: number = w * x2, wy: number = w * y2, wz: number = w * z2, sx: number = scale.x, sy: number = scale.y, sz: number = scale.z;
+        var x: number = rot.x,
+            y: number = rot.y,
+            z: number = rot.z,
+            w: number = rot.w,
+            x2: number = x + x,
+            y2: number = y + y,
+            z2: number = z + z;
+        var xx: number = x * x2,
+            xy: number = x * y2,
+            xz: number = x * z2,
+            yy: number = y * y2,
+            yz: number = y * z2,
+            zz: number = z * z2;
+        var wx: number = w * x2,
+            wy: number = w * y2,
+            wz: number = w * z2,
+            sx: number = scale.x,
+            sy: number = scale.y,
+            sz: number = scale.z;
 
         oe[0] = (1 - (yy + zz)) * sx;
         oe[1] = (xy + wz) * sx;
@@ -341,13 +422,27 @@ export class Matrix4x4 implements IClone {
      * @param	far 远裁面。
      * @param	out 输出矩阵。
      */
-    static createPerspective(fov: number, aspect: number, znear: number, zfar: number, out: Matrix4x4): void {
+    static createPerspective(
+        fov: number,
+        aspect: number,
+        znear: number,
+        zfar: number,
+        out: Matrix4x4
+    ): void {
         var yScale: number = 1.0 / Math.tan(fov * 0.5);
         var xScale: number = yScale / aspect;
 
         var halfWidth: number = znear / xScale;
         var halfHeight: number = znear / yScale;
-        Matrix4x4.createPerspectiveOffCenter(-halfWidth, halfWidth, -halfHeight, halfHeight, znear, zfar, out);
+        Matrix4x4.createPerspectiveOffCenter(
+            -halfWidth,
+            halfWidth,
+            -halfHeight,
+            halfHeight,
+            znear,
+            zfar,
+            out
+        );
     }
 
     /**
@@ -360,12 +455,20 @@ export class Matrix4x4 implements IClone {
      * @param	zfar 视椎远边界。
      * @param	out 输出矩阵。
      */
-    static createPerspectiveOffCenter(left: number, right: number, bottom: number, top: number, znear: number, zfar: number, out: Matrix4x4): void {
+    static createPerspectiveOffCenter(
+        left: number,
+        right: number,
+        bottom: number,
+        top: number,
+        znear: number,
+        zfar: number,
+        out: Matrix4x4
+    ): void {
         var oe: Float32Array = out.elements;
         var zRange: number = zfar / (zfar - znear);
         oe[1] = oe[2] = oe[3] = oe[4] = oe[6] = oe[7] = oe[12] = oe[13] = oe[15] = 0;
-        oe[0] = 2.0 * znear / (right - left);
-        oe[5] = 2.0 * znear / (top - bottom);
+        oe[0] = (2.0 * znear) / (right - left);
+        oe[5] = (2.0 * znear) / (top - bottom);
         oe[8] = (left + right) / (right - left);
         oe[9] = (top + bottom) / (top - bottom);
         oe[10] = -zRange;
@@ -383,8 +486,15 @@ export class Matrix4x4 implements IClone {
      * @param	far 视椎远边界。
      * @param	out 输出矩阵。
      */
-    static createOrthoOffCenter(left: number, right: number, bottom: number, top: number, znear: number, zfar: number, out: Matrix4x4): void {
-
+    static createOrthoOffCenter(
+        left: number,
+        right: number,
+        bottom: number,
+        top: number,
+        znear: number,
+        zfar: number,
+        out: Matrix4x4
+    ): void {
         var oe: Float32Array = out.elements;
         var zRange: number = 1.0 / (zfar - znear);
         oe[1] = oe[2] = oe[3] = oe[4] = oe[6] = oe[8] = oe[7] = oe[9] = oe[11] = 0;
@@ -398,21 +508,40 @@ export class Matrix4x4 implements IClone {
     }
 
     /**矩阵元素数组*/
-    elements: Float32Array;
+    public elements: Float32Array;
 
     /**
      * 创建一个 <code>Matrix4x4</code> 实例。
      * @param	4x4矩阵的各元素
      */
-    constructor(m11: number = 1, m12: number = 0, m13: number = 0, m14: number = 0, m21: number = 0, m22: number = 1, m23: number = 0, m24: number = 0, m31: number = 0, m32: number = 0, m33: number = 1, m34: number = 0, m41: number = 0, m42: number = 0, m43: number = 0, m44: number = 1, elements: Float32Array = null) {
+    constructor(
+        m11: number = 1,
+        m12: number = 0,
+        m13: number = 0,
+        m14: number = 0,
+        m21: number = 0,
+        m22: number = 1,
+        m23: number = 0,
+        m24: number = 0,
+        m31: number = 0,
+        m32: number = 0,
+        m33: number = 1,
+        m34: number = 0,
+        m41: number = 0,
+        m42: number = 0,
+        m43: number = 0,
+        m44: number = 1,
+        elements: Float32Array = null
+    ) {
         if (arguments.length == 0) {
             this.elements = DEFAULTARRAY.slice();
             return;
         }
-        if (arguments.length === 1 && arguments[0] === null)
-            return;
+        if (arguments.length === 1 && arguments[0] === null) return;
 
-        var e: Float32Array = elements ? this.elements = elements : this.elements = new Float32Array(16);//TODO:[NATIVE]临时
+        var e: Float32Array = elements
+            ? (this.elements = elements)
+            : (this.elements = new Float32Array(16)); //TODO:[NATIVE]临时
         e[0] = m11;
         e[1] = m12;
         e[2] = m13;
@@ -433,9 +562,9 @@ export class Matrix4x4 implements IClone {
 
     /**
      * @internal
-     * @param row 
-     * @param column 
-     * @returns 
+     * @param row
+     * @param column
+     * @returns
      */
     getElementByRowColumn(row: number, column: number): number {
         if (row < 0 || row > 3)
@@ -443,14 +572,14 @@ export class Matrix4x4 implements IClone {
         if (column < 0 || column > 3)
             throw new Error("column Rows and columns for matrices run from 0 to 3, inclusive.");
 
-        return this.elements[(row * 4) + column];
+        return this.elements[row * 4 + column];
     }
 
     /**
      * @internal
-     * @param row 
-     * @param column 
-     * @param value 
+     * @param row
+     * @param column
+     * @param value
      */
     setElementByRowColumn(row: number, column: number, value: number): void {
         if (row < 0 || row > 3)
@@ -458,14 +587,14 @@ export class Matrix4x4 implements IClone {
         if (column < 0 || column > 3)
             throw new Error("column Rows and columns for matrices run from 0 to 3, inclusive.");
 
-        this.elements[(row * 4) + column] = value;
+        this.elements[row * 4 + column] = value;
     }
 
-       /**
+    /**
      * 四元数生成矩阵
-     * @param rotation 
+     * @param rotation
      */
-       setRotation(rotation: Quaternion): void {
+    setRotation(rotation: Quaternion): void {
         var rotationX: number = rotation.x;
         var rotationY: number = rotation.y;
         var rotationZ: number = rotation.z;
@@ -482,20 +611,20 @@ export class Matrix4x4 implements IClone {
         var xw: number = rotationX * rotationW;
 
         var e: Float32Array = this.elements;
-        e[0] = 1.0 - (2.0 * (yy + zz));
+        e[0] = 1.0 - 2.0 * (yy + zz);
         e[1] = 2.0 * (xy + zw);
         e[2] = 2.0 * (zx - yw);
         e[4] = 2.0 * (xy - zw);
-        e[5] = 1.0 - (2.0 * (zz + xx));
+        e[5] = 1.0 - 2.0 * (zz + xx);
         e[6] = 2.0 * (yz + xw);
         e[8] = 2.0 * (zx + yw);
         e[9] = 2.0 * (yz - xw);
-        e[10] = 1.0 - (2.0 * (yy + xx));
+        e[10] = 1.0 - 2.0 * (yy + xx);
     }
 
     /**
      * 位置
-     * @param position 
+     * @param position
      */
     setPosition(position: Vector3): void {
         var e: Float32Array = this.elements;
@@ -503,7 +632,6 @@ export class Matrix4x4 implements IClone {
         e[13] = position.y;
         e[14] = position.z;
     }
-
 
     /**
      * 判断两个4x4矩阵的值是否相等。
@@ -513,7 +641,24 @@ export class Matrix4x4 implements IClone {
         var e: Float32Array = this.elements;
         var oe: Float32Array = other.elements;
 
-        return (MathUtils3D.nearEqual(e[0], oe[0]) && MathUtils3D.nearEqual(e[1], oe[1]) && MathUtils3D.nearEqual(e[2], oe[2]) && MathUtils3D.nearEqual(e[3], oe[3]) && MathUtils3D.nearEqual(e[4], oe[4]) && MathUtils3D.nearEqual(e[5], oe[5]) && MathUtils3D.nearEqual(e[6], oe[6]) && MathUtils3D.nearEqual(e[7], oe[7]) && MathUtils3D.nearEqual(e[8], oe[8]) && MathUtils3D.nearEqual(e[9], oe[9]) && MathUtils3D.nearEqual(e[10], oe[10]) && MathUtils3D.nearEqual(e[11], oe[11]) && MathUtils3D.nearEqual(e[12], oe[12]) && MathUtils3D.nearEqual(e[13], oe[13]) && MathUtils3D.nearEqual(e[14], oe[14]) && MathUtils3D.nearEqual(e[15], oe[15]));
+        return (
+            MathUtils3D.nearEqual(e[0], oe[0]) &&
+            MathUtils3D.nearEqual(e[1], oe[1]) &&
+            MathUtils3D.nearEqual(e[2], oe[2]) &&
+            MathUtils3D.nearEqual(e[3], oe[3]) &&
+            MathUtils3D.nearEqual(e[4], oe[4]) &&
+            MathUtils3D.nearEqual(e[5], oe[5]) &&
+            MathUtils3D.nearEqual(e[6], oe[6]) &&
+            MathUtils3D.nearEqual(e[7], oe[7]) &&
+            MathUtils3D.nearEqual(e[8], oe[8]) &&
+            MathUtils3D.nearEqual(e[9], oe[9]) &&
+            MathUtils3D.nearEqual(e[10], oe[10]) &&
+            MathUtils3D.nearEqual(e[11], oe[11]) &&
+            MathUtils3D.nearEqual(e[12], oe[12]) &&
+            MathUtils3D.nearEqual(e[13], oe[13]) &&
+            MathUtils3D.nearEqual(e[14], oe[14]) &&
+            MathUtils3D.nearEqual(e[15], oe[15])
+        );
     }
 
     /**
@@ -541,29 +686,51 @@ export class Matrix4x4 implements IClone {
      * @param	scale 缩放向量。
      * @return 是否分解成功。
      */
-    decomposeTransRotMatScale(translation: Vector3, rotationMatrix: Matrix4x4, scale: Vector3): boolean {
+    decomposeTransRotMatScale(
+        translation: Vector3,
+        rotationMatrix: Matrix4x4,
+        scale: Vector3
+    ): boolean {
         var e: Float32Array = this.elements;
         var te: Vector3 = translation;
         var re: Float32Array = rotationMatrix.elements;
         var se: Vector3 = scale;
 
-        //Get the translation. 
+        //Get the translation.
         te.x = e[12];
         te.y = e[13];
         te.z = e[14];
 
-        //Scaling is the length of the rows. 
-        var m11: number = e[0], m12: number = e[1], m13: number = e[2];
-        var m21: number = e[4], m22: number = e[5], m23: number = e[6];
-        var m31: number = e[8], m32: number = e[9], m33: number = e[10];
+        //Scaling is the length of the rows.
+        var m11: number = e[0],
+            m12: number = e[1],
+            m13: number = e[2];
+        var m21: number = e[4],
+            m22: number = e[5],
+            m23: number = e[6];
+        var m31: number = e[8],
+            m32: number = e[9],
+            m33: number = e[10];
 
-        var sX: number = se.x = Math.sqrt((m11 * m11) + (m12 * m12) + (m13 * m13));
-        var sY: number = se.y = Math.sqrt((m21 * m21) + (m22 * m22) + (m23 * m23));
-        var sZ: number = se.z = Math.sqrt((m31 * m31) + (m32 * m32) + (m33 * m33));
+        var sX: number = (se.x = Math.sqrt(m11 * m11 + m12 * m12 + m13 * m13));
+        var sY: number = (se.y = Math.sqrt(m21 * m21 + m22 * m22 + m23 * m23));
+        var sZ: number = (se.z = Math.sqrt(m31 * m31 + m32 * m32 + m33 * m33));
 
-        //If any of the scaling factors are zero, than the rotation matrix can not exist. 
+        //If any of the scaling factors are zero, than the rotation matrix can not exist.
         if (MathUtils3D.isZero(sX) || MathUtils3D.isZero(sY) || MathUtils3D.isZero(sZ)) {
-            re[1] = re[2] = re[3] = re[4] = re[6] = re[7] = re[8] = re[9] = re[11] = re[12] = re[13] = re[14] = 0;
+            re[1] =
+                re[2] =
+                re[3] =
+                re[4] =
+                re[6] =
+                re[7] =
+                re[8] =
+                re[9] =
+                re[11] =
+                re[12] =
+                re[13] =
+                re[14] =
+                    0;
             re[0] = re[5] = re[10] = re[15] = 1;
             return false;
         }
@@ -597,9 +764,10 @@ export class Matrix4x4 implements IClone {
         re[10] = at.z;
 
         // In case of reflexions//TODO:是否不用计算dot后的值即为结果
-        ((re[0] * m11 + re[1] * m12 + re[2] * m13)/*Vector3.dot(right,Right)*/ < 0.0) && (se.x = -sX);
-        ((re[4] * m21 + re[5] * m22 + re[6] * m23)/* Vector3.dot(up, Up)*/ < 0.0) && (se.y = -sY);
-        ((re[8] * m31 + re[9] * m32 + re[10] * m33)/*Vector3.dot(at, Backward)*/ < 0.0) && (se.z = -sZ);
+        re[0] * m11 + re[1] * m12 + re[2] * m13 /*Vector3.dot(right,Right)*/ < 0.0 && (se.x = -sX);
+        re[4] * m21 + re[5] * m22 + re[6] * m23 /* Vector3.dot(up, Up)*/ < 0.0 && (se.y = -sY);
+        re[8] * m31 + re[9] * m32 + re[10] * m33 /*Vector3.dot(at, Backward)*/ < 0.0 &&
+            (se.z = -sZ);
 
         return true;
     }
@@ -611,11 +779,12 @@ export class Matrix4x4 implements IClone {
      * @param	out float roll
      * @return
      */
-    decomposeYawPitchRoll(yawPitchRoll: Vector3): void {//TODO:经飞仙测试,好像有BUG。
+    decomposeYawPitchRoll(yawPitchRoll: Vector3): void {
+        //TODO:经飞仙测试,好像有BUG。
         var pitch: number = Math.asin(-this.elements[9]);
         yawPitchRoll.y = pitch;
         // Hardcoded constant - burn him, he's a witch
-        // double threshold = 0.001; 
+        // double threshold = 0.001;
         var test: number = Math.cos(pitch);
         if (test > MathUtils3D.zeroTolerance) {
             yawPitchRoll.z = Math.atan2(this.elements[1], this.elements[5]);
@@ -627,14 +796,16 @@ export class Matrix4x4 implements IClone {
     }
 
     /**
-     * 归一化矩阵 
+     * 归一化矩阵
      */
     normalize(): void {
         var v: Float32Array = this.elements;
-        var c: number = v[0], d: number = v[1], e: number = v[2], g: number = Math.sqrt(c * c + d * d + e * e);
+        var c: number = v[0],
+            d: number = v[1],
+            e: number = v[2],
+            g: number = Math.sqrt(c * c + d * d + e * e);
         if (g) {
-            if (g == 1)
-                return;
+            if (g == 1) return;
         } else {
             v[0] = 0;
             v[1] = 0;
@@ -679,14 +850,37 @@ export class Matrix4x4 implements IClone {
      * @param	out 输出矩阵
      */
     invert(out: Matrix4x4): void {
-
         var ae: Float32Array = this.elements;
         var oe: Float32Array = out.elements;
-        var a00: number = ae[0], a01: number = ae[1], a02: number = ae[2], a03: number = ae[3], a10: number = ae[4], a11: number = ae[5], a12: number = ae[6], a13: number = ae[7], a20: number = ae[8], a21: number = ae[9], a22: number = ae[10], a23: number = ae[11], a30: number = ae[12], a31: number = ae[13], a32: number = ae[14], a33: number = ae[15],
-
-            b00: number = a00 * a11 - a01 * a10, b01: number = a00 * a12 - a02 * a10, b02: number = a00 * a13 - a03 * a10, b03: number = a01 * a12 - a02 * a11, b04: number = a01 * a13 - a03 * a11, b05: number = a02 * a13 - a03 * a12, b06: number = a20 * a31 - a21 * a30, b07: number = a20 * a32 - a22 * a30, b08: number = a20 * a33 - a23 * a30, b09: number = a21 * a32 - a22 * a31, b10: number = a21 * a33 - a23 * a31, b11: number = a22 * a33 - a23 * a32,
-
-            // Calculate the determinant 
+        var a00: number = ae[0],
+            a01: number = ae[1],
+            a02: number = ae[2],
+            a03: number = ae[3],
+            a10: number = ae[4],
+            a11: number = ae[5],
+            a12: number = ae[6],
+            a13: number = ae[7],
+            a20: number = ae[8],
+            a21: number = ae[9],
+            a22: number = ae[10],
+            a23: number = ae[11],
+            a30: number = ae[12],
+            a31: number = ae[13],
+            a32: number = ae[14],
+            a33: number = ae[15],
+            b00: number = a00 * a11 - a01 * a10,
+            b01: number = a00 * a12 - a02 * a10,
+            b02: number = a00 * a13 - a03 * a10,
+            b03: number = a01 * a12 - a02 * a11,
+            b04: number = a01 * a13 - a03 * a11,
+            b05: number = a02 * a13 - a03 * a12,
+            b06: number = a20 * a31 - a21 * a30,
+            b07: number = a20 * a32 - a22 * a30,
+            b08: number = a20 * a33 - a23 * a30,
+            b09: number = a21 * a32 - a22 * a31,
+            b10: number = a21 * a33 - a23 * a31,
+            b11: number = a22 * a33 - a23 * a32,
+            // Calculate the determinant
             det: number = b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06;
 
         if (Math.abs(det) === 0.0) {
@@ -720,8 +914,13 @@ export class Matrix4x4 implements IClone {
      * @param	cameraForward  相机前向量
      * @param	mat            变换矩阵
      */
-    static billboard(objectPosition: Vector3, cameraPosition: Vector3, cameraUp: Vector3, cameraForward: Vector3, mat: Matrix4x4): void {
-
+    static billboard(
+        objectPosition: Vector3,
+        cameraPosition: Vector3,
+        cameraUp: Vector3,
+        cameraForward: Vector3,
+        mat: Matrix4x4
+    ): void {
         Vector3.subtract(objectPosition, cameraPosition, _tempVector0);
 
         var lengthSq: number = Vector3.scalarLengthSquared(_tempVector0);
@@ -777,15 +976,13 @@ export class Matrix4x4 implements IClone {
     isIdentity(): boolean {
         let delty = function (num0: number, num1: number) {
             return Math.abs(num0 - num1) < 1e-7;
-        }
+        };
         let e = this.elements;
         let defined = Matrix4x4.DEFAULT.elements;
         for (let i = 0, n = e.length; i < n; i++) {
-            if (!delty(e[i], defined[i]))
-                return false;
+            if (!delty(e[i], defined[i])) return false;
         }
         return true;
-
     }
 
     /**
@@ -807,7 +1004,7 @@ export class Matrix4x4 implements IClone {
 
     /**
      * 克隆
-     * @param destObject 
+     * @param destObject
      */
     cloneByArray(destObject: Float32Array) {
         this.elements.set(destObject);
@@ -883,8 +1080,8 @@ export class Matrix4x4 implements IClone {
         this.decomposeTransRotScale(_tempVector0, Quaternion.TEMP, _tempVector1);
         var scale: Vector3 = _tempVector1;
         var isInvert: boolean = scale.x < 0;
-        (scale.y < 0) && (isInvert = !isInvert);
-        (scale.z < 0) && (isInvert = !isInvert);
+        scale.y < 0 && (isInvert = !isInvert);
+        scale.z < 0 && (isInvert = !isInvert);
         return isInvert;
     }
 }

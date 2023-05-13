@@ -19,5 +19,6 @@
     "strict": true,
     "strictNullChecks": false,
   },
-  "files": ["src/index.ts"]
+  "include": ["src/betterCreator/maths/*","src/betterCreator/utils/*"],
+  "files": ["src/betterCreator/BetterCreatorEvn.ts","src/betterCreator/BetterCreator.ts","src/index.ts"]
 }
